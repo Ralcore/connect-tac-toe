@@ -1,0 +1,101 @@
+  _______                              __   
+ |   _   .-----.-----.-----.-----.----|  |_ 
+ |.  1___|  _  |     |     |  -__|  __|   _|
+ |.  |___|_____|__|__|__|__|_____|____|____|
+ |:  1   |   _______                                  a dumb game and certified affront to god
+ |::.. . |  |       .---.-.----.                           created by ralcore @ralcore_       
+ `-------'  |.|   | |  _  |  __|                              designed for 2 players
+            `-|.  |-|___._|____|                  
+              |:  |   _______                                    
+              |::.|  |       .-----.-----.                                    
+              `---'  |.|   | |  _  |  -__|                                                       
+                     `-|.  |-|_____|_____|                      
+                       |:  |                                    
+                       |::.|                                    
+                       `---'                                    
+                                           
+================================================================================================
+################################################################################################
+================================================================================================
+[][][]what the heck is this?[][][]
+
+connect tac toe is a merging together of 
+-connect 4 (aka four in a row)
+-tic tac toe (aka noughts and crosses (the superior name but it doesn't work for the title))
+to create a game that may or may not work well. who knows!
+
+it was developed as part of a university assignment to develop a simple game in processing/java.
+
+[][][]what are the rules?[][][]
+
+the game begins as a regular game of connect 4.
+both players may drop circles from the top of the board, and if they connect 4 circles of their
+own colour, they win.
+
+however, players are also given the option to place tic tac toe pieces. these pieces are not
+effected by gravity, and can be placed anywhere on the board so long as:
+-the placement of the piece is not already taken by another piece (e.g. you can't place it
+if there's already a circle or a tic tac toe piece where you're placing)
+-the place you are placing in is equal to or lower than the height of the highest current
+connect 4 piece (e.g. if there is a connect 4 piece on the third row, you can only place
+a tic tac toe piece on the third, second or first rows)
+
+a player may also win by connecting 3 tic tac toe pieces. they can place a tic tac toe piece
+whenever they like, however upon placing a tic tac toe piece, their next turn must be a connect
+4 piece. this limits the amount of tic tac toe pieces that can be placed.
+
+when dropping a connect 4 piece, you may choose to drop through tic tac toe pieces, or land on
+top of them. this means that tic tac toe pieces can lead to multiple vaild positions for dropping
+connect 4 pieces in a single column. an exception to this rule is if there are, for instance, two
+X's stacked vertically:
+
+X   <- tic tac toe pieces
+X
+
+#   <- bottom of the playfield
+
+you could land on top of the first X, but landing on the bottom X would place you inside another
+piece, so it's not a valid move. in this case, you could therefore land either on top of the
+pieces:
+
+@
+X
+X
+
+#
+
+or through the pieces onto the bottom of the playfield:
+
+X
+X
+@
+#
+
+additional balancing changes may need to be made later on, depending on how many games tie out.
+
+[][][]alright, but how are you planning to code something like this?[][][]
+
+the board itself will be stored as an array, that is then read and drawn every frame via processing.
+
+this board will be searched every time a move is made for a win condition. this will be done by
+checking the area surrounding the placed piece for identical pieces (i.e. if the placed piece is
+a tic tac toe X, it will search the surrounding 8 tiles for another X piece), and if one is found,
+repeating the search on that tile with a set direction to search through.
+
+for this to happen, two loops will be used, to find the two "ends" of a chain.
+
+the first loop tries to find the end of the chain. given a set of relational coordinates (e.g.
+{-1, -1} for up-left or {1, 1} for down-right) it will search for a piece in that location.
+if there is a piece there, it will search in the same relational coordinates from that piece.
+this will eventually halt once either the edge of the playfield or a different piece is found.
+
+once this happens, the second loop will kick in. it will inverse the relational coordinates
+(e.g. {-1, 0} would turn into {1, 0}) and start working back along the chain, this time
+incrementing a counter to work out how long the total chain is.
+
+the fact that we check both up and down the chain means that even if a winning piece is placed
+in the middle of a chain, this algorithm will catch it.
+
+finding placable locations will be easy. simply put, if a position has a null value, and the
+position below it has a non-null value, a connect 4 piece is able to be placed there, and if
+a position has a null value at all, a tic tac toe piece is able to be placed there.
